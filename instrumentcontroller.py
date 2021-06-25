@@ -336,6 +336,8 @@ class InstrumentController(QObject):
                     sa.send(':CAL:AUTO ON')
                     raise RuntimeError('measurement cancelled')
 
+                loss = 10
+
                 gen_mod.send(f'SOUR:FREQ {mod_f}')
 
                 if not mock_enabled:
@@ -356,18 +358,23 @@ class InstrumentController(QObject):
                 raw_point = {
                     'lo_p': lo_pow,
                     'lo_f': lo_freq,
+                    'mod_f': mod_f,
                     'src_u': src_u_read,   # power source voltage as set in GUI
                     'src_i': src_i_read,
                     'sa_p_out': sa_p_out,
+                    'loss': loss,
                 }
 
                 if mock_enabled:
                     # TODO record new test data
                     raw_point = mocked_raw_data[index]
+                    raw_point['loss'] = loss
+                    raw_point['mod_f'] = mod_f
                     index += 1
 
                 print(raw_point)
                 res.append(raw_point)
+                self._add_measure_point(raw_point)
 
         gen_mod.send(f'OUTP:STAT OFF')
         gen_lo.send(f'OUTP:STAT OFF')
