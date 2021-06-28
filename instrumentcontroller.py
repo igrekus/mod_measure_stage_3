@@ -61,8 +61,11 @@ class InstrumentController(QObject):
             'sa_span': 10.0,   # MHz
             'sa_avg_state': False,
             'sa_avg_count': 16,
-        }
-                                                  )
+            'sep_1': None,
+            'u_min': 4.75,
+            'u_max': 5.25,
+            'u_delta': 0.05,
+        })
         self._calibrated_pows_lo = load_ast_if_exists('cal_lo.ini', default={})
         self._calibrated_pows_rf = load_ast_if_exists('cal_rf.ini', default={})
 

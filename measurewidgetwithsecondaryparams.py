@@ -78,6 +78,19 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
                     'Avg.count=',
                     {'parent': self, 'start': 0.0, 'end': 1000.0, 'step': 1.0, 'value': 16.0, 'suffix': ''}
                 ],
+                'sep_1': ['', {'parent': self, 'value': None}],
+                'u_min': [
+                    'Uмин.=',
+                    {'parent': self, 'start': 0.0, 'end': 30.0, 'step': 0.05, 'value': 4.75, 'suffix': ' В'}
+                ],
+                'u_max': [
+                    'Uмакс.=',
+                    {'parent': self, 'start': 0.0, 'end': 30.0, 'step': 0.05, 'value': 5.25, 'suffix': ' В'}
+                ],
+                'u_delta': [
+                    'ΔU=',
+                    {'parent': self, 'start': 0.0, 'end': 30.0, 'step': 0.05, 'value': 0.05, 'suffix': ' В'}
+                ],
             }
         )
 
