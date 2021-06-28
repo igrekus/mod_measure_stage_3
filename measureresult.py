@@ -15,13 +15,14 @@ class MeasureResult:
     def __init__(self):
         self._secondaryParams = None
         self._raw = list()
+        self._raw_current = list()
         self._report = dict()
         self._processed = list()
         self._processed_currents = list()
         self.ready = False
 
         self.data1 = defaultdict(list)
-        self.data2 = defaultdict(list)
+        self.data2 = dict()
 
         self.adjustment = load_ast_if_exists('adjust.ini', default=None)
 
@@ -29,10 +30,7 @@ class MeasureResult:
         return self.ready
 
     def _process(self):
-        currents = {1: []}
-
-        self.data2 = currents
-        self._processed_currents = currents
+        self.data2[1] = [list(d.values()) for d in self._raw_current]
         self.ready = True
 
     def _process_point(self, data):
@@ -68,6 +66,7 @@ class MeasureResult:
     def clear(self):
         self._secondaryParams.clear()
         self._raw.clear()
+        self._raw_current.clear()
         self._report.clear()
         self._processed.clear()
         self._processed_currents.clear()

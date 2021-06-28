@@ -52,7 +52,7 @@ class PrimaryPlotWidget(QWidget):
         self._proxy_00 = pg.SignalProxy(self._plot_00.scene().sigMouseMoved, rateLimit=60, slot=self.mouseMoved_00)
 
         self._plot_10.setLabel('left', 'Iпот, мА', **self.label_style)
-        self._plot_10.setLabel('bottom', 'Pвх, дБм', **self.label_style)
+        self._plot_10.setLabel('bottom', 'Uпит, В', **self.label_style)
         self._plot_10.enableAutoRange('x')
         self._plot_10.enableAutoRange('y')
         self._plot_10.showGrid(x=True, y=True)
@@ -113,7 +113,7 @@ class PrimaryPlotWidget(QWidget):
     def plot(self):
         print('plotting primary stats')
         _plot_curves(self._controller.result.data1, self._curves_00, self._plot_00, prefix='Fгет= ', suffix=' ГГц')
-        # _plot_curves(self._controller.result.data2, self._curves_10, self._plot_10, prefix='', suffix='')
+        _plot_curves(self._controller.result.data2, self._curves_10, self._plot_10, prefix='', suffix='')
 
 
 def _plot_curves(datas, curves, plot, prefix='', suffix=''):

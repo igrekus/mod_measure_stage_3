@@ -221,7 +221,8 @@ class InstrumentController(QObject):
         print(f'launch measure with {token} {param} {secondary}')
 
         self._clear()
-        self._measure_s_params(token, param, secondary)
+        _, i_res = self._measure_s_params(token, param, secondary)
+        self.result._raw_current = i_res
         return True
 
     def _clear(self):
@@ -270,6 +271,10 @@ class InstrumentController(QObject):
         sa_avg_state = 'ON' if secondary['sa_avg_state'] else 'OFF'
         sa_avg_count = secondary['sa_avg_count']
 
+        u_start = secondary['u_min']
+        u_end = secondary['u_max']
+        u_step = secondary['u_delta']
+
         mod_f_values = [
             round(x, 3)for x in
             np.arange(start=mod_f_min, stop=mod_f_max + 0.0002, step=mod_f_delta)
@@ -280,6 +285,9 @@ class InstrumentController(QObject):
             np.arange(start=lo_f_start, stop=lo_f_end + 0.0001, step=lo_f_step)
         ]
 
+        u_values = [round(x, 3) for x in np.arange(start=u_start, stop=u_end + 0.002, step=u_step)]
+
+        # region main measure
         gen_lo.send(f':OUTP:MOD:STAT OFF')
         gen_lo.send(f':RAD:ARB OFF')
         gen_lo.send(f':DM:IQAD:EXT:COFF {mod_u_offs}')
@@ -397,8 +405,49 @@ class InstrumentController(QObject):
         if not mock_enabled:
             with open('out.txt', mode='wt', encoding='utf-8') as f:
                 f.write(str(res))
+        # endregion
 
-        return res
+        # region measure current
+        if mock_enabled:
+            with open('./mock_data/current.txt', mode='rt', encoding='utf-8') as f:
+                index = 0
+                mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
+
+        i_res = []
+        for u in u_values:
+            if token.cancelled:
+                src.send('OUTPut OFF')
+                raise RuntimeError('measurement cancelled')
+
+            src.send(f'APPLY p6v,{u}V,{src_i_max}mA')
+            src.send('OUTPut ON')
+
+            time.sleep(0.1)
+            if not mock_enabled:
+                time.sleep(0.5)
+
+            # u_mul_read = float(mult.query('MEAS:VOLT?'))
+            i_mul_read = float(mult.query('MEAS:CURR:DC? 1A,DEF'))
+
+            raw_point = {
+                'u_mul': u,
+                # 'u_mul': u_mul_read,
+                'i_mul': i_mul_read * 1_000,
+            }
+
+            if mock_enabled:
+                raw_point = mocked_raw_data[index]
+                raw_point['i_mul'] *= 1_000
+                index += 1
+
+            print(raw_point)
+            i_res.append(raw_point)
+
+        if not mock_enabled:
+            time.sleep(0.5)
+        src.send('OUTPut OFF')
+        # endregion
+        return res, i_res
 
     def _add_measure_point(self, data):
         print('measured point:', data)
