@@ -355,9 +355,17 @@ class InstrumentController(QObject):
                 gen_mod.send(f'SOUR:FREQ {mod_f}')
 
                 if not mock_enabled:
-                    time.sleep(0.8)
+                    time.sleep(0.3)
 
-                sa.send(f':SENSe:FREQuency:CENTer {sa_freq}')
+                if lo_f_is_div2:
+                    sa_center_freq = sa_freq + mod_f
+                else:
+                    sa_center_freq = sa_freq - mod_f
+
+                sa.send(f':SENSe:FREQuency:CENTer {sa_center_freq}')
+
+                if not mock_enabled:
+                    time.sleep(0.3)
 
                 if lo_f_is_div2:
                     f_out = sa_freq + mod_f
