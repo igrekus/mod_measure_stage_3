@@ -405,7 +405,6 @@ class InstrumentController(QObject):
 
         src.send('OUTPut OFF')
 
-        gen_lo.send(f':DM:IQAD OFF')
         gen_lo.send(f':DM:STAT OFF')
         gen_lo.send(f'SOUR:POW {lo_pow}dbm')
         gen_lo.send(f'SOUR:FREQ {lo_f_start}')
@@ -423,6 +422,9 @@ class InstrumentController(QObject):
             with open('./mock_data/current.txt', mode='rt', encoding='utf-8') as f:
                 index = 0
                 mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
+
+        gen_lo.send(f':DM:IQAD OFF')
+        gen_lo.send(f':DM:IQAD ON')
 
         i_res = []
         for u in u_values:
@@ -456,6 +458,8 @@ class InstrumentController(QObject):
 
         if not mock_enabled:
             time.sleep(0.5)
+
+        gen_lo.send(f':DM:IQAD OFF')
         src.send('OUTPut OFF')
         # endregion
         return res, i_res
