@@ -327,6 +327,8 @@ class InstrumentController(QObject):
                 lo_freq *= 2
 
             gen_lo.send(f'SOUR:FREQ {lo_freq}')
+            gen_lo.send(f':DM:IQAD OFF')
+            gen_lo.send(f':DM:IQAD ON')
 
             for mod_f in mod_f_values:
 
