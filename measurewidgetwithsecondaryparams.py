@@ -19,7 +19,11 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
         self._paramInputWidget.createWidgets(
             params={
                 'Plo': [
-                    'Pгет мин=',
+                    'Pгет=',
+                    {'parent': self, 'start': -30.0, 'end': 30.0, 'step': 1.0, 'value': -5.0, 'suffix': ' дБм'}
+                ],
+                'Pmod': [
+                    'Pмод=',
                     {'parent': self, 'start': -30.0, 'end': 30.0, 'step': 1.0, 'value': -5.0, 'suffix': ' дБм'}
                 ],
                 'Flo_min': [

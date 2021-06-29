@@ -47,6 +47,7 @@ class InstrumentController(QObject):
 
         self.secondaryParams = load_ast_if_exists('params.ini', default={
             'Plo': -5.0,
+            'Pmod': -5.0,
             'Flo_min': 0.6,
             'Flo_max': 6.6,
             'Flo_delta': 1.0,
@@ -260,7 +261,7 @@ class InstrumentController(QObject):
         mod_f_max = secondary['Fmod_max'] * MEGA
         mod_f_delta = secondary['Fmod_delta'] * MEGA
         mod_u_offs = secondary['Uoffs'] * MILLI
-        mod_pow = lo_pow
+        mod_pow = secondary['Pmod']
 
         src_u = secondary['Usrc']
         src_i_max = 200   # mA
