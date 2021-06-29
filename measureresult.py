@@ -60,7 +60,8 @@ class MeasureResult:
         }
 
         lo_f_label = lo_f / GIGA
-        self.data1[lo_f_label].append([mod_f, sa_p_out])
+        mod_f_label = mod_f / MEGA
+        self.data1[lo_f_label].append([mod_f_label, sa_p_out])
         self._processed.append({**self._report})
 
     def clear(self):

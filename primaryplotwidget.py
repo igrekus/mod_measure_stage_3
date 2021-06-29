@@ -38,7 +38,7 @@ class PrimaryPlotWidget(QWidget):
         self._curves_10 = dict()
 
         self._plot_00.setLabel('left', 'Pвых, дБм', **self.label_style)
-        self._plot_00.setLabel('bottom', 'Fмод, ГГц', **self.label_style)
+        self._plot_00.setLabel('bottom', 'Fмод, МГц', **self.label_style)
         self._plot_00.enableAutoRange('x')
         self._plot_00.enableAutoRange('y')
         self._plot_00.showGrid(x=True, y=True)
