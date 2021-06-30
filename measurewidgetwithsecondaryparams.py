@@ -121,9 +121,14 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
     def calibrate(self, what):
         print(f'calibrating {what}...')
         self._modeDuringMeasure()
+        calibrations = {
+            'LO': self._controller._calibrateLO,
+            'RF': self._controller._calibrateRF,
+            'Mod': self._controller._calibrateMod,
+        }
         self._threads.start(
             MeasureTask(
-                self._controller._calibrateLO if what == 'LO' else self._controller._calibrateRF,
+                calibrations[what],
                 self.calibrateTaskComplete,
                 self._token,
                 [self._selectedDevice, self._params]
