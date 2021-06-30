@@ -7,8 +7,9 @@ from textwrap import dedent
 
 import pandas as pd
 
-from util.file import load_ast_if_exists, pprint_to_file
+from util.file import load_ast_if_exists, pprint_to_file, make_dirs, open_explorer_at
 from util.const import *
+from util.string import now_timestamp
 
 
 class MeasureResult:
@@ -30,7 +31,9 @@ class MeasureResult:
         return self.ready
 
     def _process(self):
-        self.data2[1] = [list(d.values()) for d in self._raw_current]
+        currents = [list(d.values()) for d in self._raw_current]
+        self.data2[1] = currents
+        self._processed_currents = currents
         self.ready = True
 
     def _process_point(self, data):
@@ -111,22 +114,30 @@ class MeasureResult:
         """.format(**self._report))
 
     def export_excel(self):
-        # TODO implement
         device = 'mod'
         path = 'xlsx'
-        if not os.path.isdir(f'{path}'):
-            os.makedirs(f'{path}')
-        file_name = f'./{path}/{device}-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx'
+
+        make_dirs(path)
+
+        file_name = f'./{path}/{device}-pout-{now_timestamp()}.xlsx'
         df = pd.DataFrame(self._processed)
 
         df.columns = [
             'Pгет, дБм', 'Fгет, ГГц', 'Pпот, дБ',
-            'Pвх, %', 'Pвх, дБм',
-            'Pвых, дБм', 'Pнес, дБм', 'Pбок, дБм', 'P3г, дБм',
-            'Кп, дБ',
+            'Pвыъ, дБм',
             'Uпит, В', 'Iпит, мА',
         ]
         df.to_excel(file_name, engine='openpyxl', index=False)
 
-        full_path = os.path.abspath(file_name)
-        Popen(f'explorer /select,"{full_path}"')
+        self._export_current()
+
+        open_explorer_at(os.path.abspath(file_name))
+
+    def _export_current(self):
+        device = 'mod'
+        path = 'xlsx'
+
+        file_name = f'./{path}/{device}-curr-{now_timestamp()}.xlsx'
+        df = pd.DataFrame(self._processed_currents, columns=['Uпит, В', 'Iпот, мА'])
+
+        df.to_excel(file_name, engine='openpyxl', index=False)
