@@ -68,6 +68,7 @@ class InstrumentController(QObject):
             'u_delta': 0.05,
         })
         self._calibrated_pows_lo = load_ast_if_exists('cal_lo.ini', default={})
+        self._calibrated_pows_mod = load_ast_if_exists('cal_mod.ini', default={})
         self._calibrated_pows_rf = load_ast_if_exists('cal_rf.ini', default={})
 
         self._instruments = dict()
@@ -197,6 +198,65 @@ class InstrumentController(QObject):
 
         self._calibrated_pows_rf = result
         return True
+
+    def _calibrateMod(self, token, secondary):
+        print('calibrate mod gen')
+
+        secondary = self.secondaryParams
+
+        gen_mod = self._instruments['P RF']
+        sa = self._instruments['Анализатор']
+
+        mod_f_min = secondary['Fmod_min'] * MEGA
+        mod_f_max = secondary['Fmod_max'] * MEGA
+        mod_f_delta = secondary['Fmod_delta'] * MEGA
+        mod_p = secondary['Pmod']
+
+        sa_rlev = secondary['sa_rlev']
+        sa_scale_y = secondary['sa_scale_y']
+        sa_span = secondary['sa_span']
+
+        mod_f_values = [
+            round(x, 3)for x in
+            np.arange(start=mod_f_min, stop=mod_f_max + 0.0002, step=mod_f_delta)
+        ]
+
+        gen_mod.send(f'SOUR:POW {mod_p}dbm')
+
+        sa.send(':CAL:AUTO OFF')
+        sa.send(f':SENS:FREQ:SPAN {sa_span}MHz')
+        sa.send(f'DISP:WIND:TRAC:Y:RLEV {sa_rlev}')
+        sa.send(f'DISP:WIND:TRAC:Y:PDIV {sa_scale_y}')
+        sa.send(':CALC:MARK1:MODE POS')
+
+        gen_mod.send(f'OUTP:STAT ON')
+
+        result = defaultdict(dict)
+        for mod_f in mod_f_values:
+            gen_mod.send(f'SOUR:FREQ {mod_f}MHz')
+
+            time.sleep(0.8)
+
+            sa_freq = mod_f
+            sa.send(f':SENSe:FREQuency:CENTer {sa_freq}MHz')
+
+            time.sleep(0.2)
+
+            sa_p_out = float(sa.query(':CALCulate:MARKer:Y?'))
+            loss = mod_p - sa_p_out
+
+            result[mod_p][mod_f] = loss
+            print('loss:', loss)
+
+        gen_mod.send(f'OUTP:STAT OFF')
+        gen_mod.send(f'SOUR:FREQ {mod_f_min}GHz')
+
+        sa.send(':CAL:AUTO ON')
+
+        result = {k: v for k, v in result.items()}
+        pprint_to_file('cal_mod.ini', result)
+
+        self._calibrated_pows_mod = result
 
     def measure(self, token, params):
         print(f'call measure with {token} {params}')
