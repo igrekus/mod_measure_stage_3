@@ -364,7 +364,7 @@ class InstrumentController(QObject):
         gen_mod.send(f'OUTP:STAT ON')
 
         if mock_enabled:
-            with open('./mock_data/-5-0db.txt', mode='rt', encoding='utf-8') as f:
+            with open('./mock_data/-5_1mhz.txt', mode='rt', encoding='utf-8') as f:
                 index = 0
                 mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
 
