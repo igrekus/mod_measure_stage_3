@@ -352,9 +352,6 @@ class InstrumentController(QObject):
         gen_lo.send(f':DM:IQAD ON')
         gen_lo.send(f':DM:STAT ON')
 
-        gen_lo.send(f'SOUR:POW {lo_pow}dbm')
-        gen_mod.send(f'SOUR:POW {mod_pow}dbm')
-
         sa.send(':CAL:AUTO OFF')
         sa.send(f':SENS:FREQ:SPAN {sa_span}')
         sa.send(f'DISP:WIND:TRAC:Y:RLEV {sa_rlev}')
@@ -403,7 +400,12 @@ class InstrumentController(QObject):
                     sa.send(':CAL:AUTO ON')
                     raise RuntimeError('measurement cancelled')
 
-                loss = 10
+                lo_loss = self._calibrated_pows_lo.get(lo_pow, dict()).get(lo_freq, 0) / 2
+                mod_loss = self._calibrated_pows_mod.get(mod_pow, dict()).get(mod_f, 0)
+                out_loss = 5
+
+                gen_mod.send(f'SOUR:POW {mod_pow + mod_loss}dbm')
+                gen_lo.send(f'SOUR:POW {lo_pow + lo_loss}dbm')
 
                 gen_mod.send(f'SOUR:FREQ {mod_f}')
 
@@ -437,14 +439,13 @@ class InstrumentController(QObject):
                     'src_u': src_u_read,   # power source voltage as set in GUI
                     'src_i': src_i_read,
                     'sa_p_out': sa_p_out,
-                    'loss': loss,
+                    'out_loss': out_loss,
                 }
 
                 if mock_enabled:
                     # TODO record new test data
                     raw_point = mocked_raw_data[index]
-                    raw_point['loss'] = loss
-                    raw_point['mod_f'] = mod_f
+                    raw_point['out_loss'] = out_loss
                     index += 1
 
                 print(raw_point)

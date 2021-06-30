@@ -41,8 +41,8 @@ class MeasureResult:
         src_u = data['src_u']
         src_i = data['src_i'] / MILLI
 
-        loss = data['loss']
-        sa_p_out = data['sa_p_out'] + loss
+        out_loss = data['out_loss']
+        sa_p_out = data['sa_p_out'] + out_loss
 
         if self.adjustment is not None:
             point = self.adjustment[len(self._processed)]
@@ -51,7 +51,7 @@ class MeasureResult:
         self._report = {
             'lo_p': lo_p,
             'lo_f': round(lo_f / GIGA, 3),
-            'lo_p_loss': loss,
+            'out_loss': out_loss,
 
             'p_out': round(sa_p_out, 2),
 
@@ -100,7 +100,7 @@ class MeasureResult:
         return dedent("""        Генератор:
         Pгет, дБм={lo_p}
         Fгет, ГГц={lo_f:0.2f}
-        Pпот, дБ={lo_p_loss:0.2f}
+        Pпот, дБ={out_loss:0.2f}
 
         Источник питания:
         U, В={src_u}
