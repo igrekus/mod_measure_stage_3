@@ -620,12 +620,10 @@ class InstrumentController(QObject):
             if not mock_enabled:
                 time.sleep(0.5)
 
-            # u_mul_read = float(mult.query('MEAS:VOLT?'))
             i_mul_read = float(mult.query('MEAS:CURR:DC? 1A,DEF'))
 
             raw_point = {
                 'u_mul': u,
-                # 'u_mul': u_mul_read,
                 'i_mul': i_mul_read * 1_000,
             }
 
