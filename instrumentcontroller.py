@@ -191,9 +191,136 @@ class InstrumentController(QObject):
         return True
 
     def _calibrateRF(self, token, secondary):
-        print('run empty calibrate RF')
+        print('run calibrate RF')
 
-        result = dict()
+        def set_read_marker(freq):
+            sa.send(f':CALCulate:MARKer1:X {freq}Hz')
+            if not mock_enabled:
+                time.sleep(0.01)
+            return float(sa.query(':CALCulate:MARKer:Y?'))
+
+        secondary = self.secondaryParams
+
+        gen_lo = self._instruments['P LO']
+        src = self._instruments['Источник']
+        sa = self._instruments['Анализатор']
+
+        lo_pow = secondary['Plo']
+        lo_f_start = secondary['Flo_min'] * GIGA
+        lo_f_end = secondary['Flo_max'] * GIGA
+        lo_f_step = secondary['Flo_delta'] * GIGA
+
+        lo_f_is_div2 = secondary['is_Flo_div2']
+
+        mod_f_min = secondary['Fmod_min'] * MEGA
+        mod_f_max = secondary['Fmod_max'] * MEGA
+        mod_f_delta = secondary['Fmod_delta'] * MEGA
+
+        src_u = secondary['Usrc']
+        src_i_max = 200   # mA
+
+        sa_rlev = secondary['sa_rlev']
+        sa_scale_y = secondary['sa_scale_y']
+        sa_span = secondary['sa_span'] * MEGA
+        sa_avg_state = 'ON' if secondary['sa_avg_state'] else 'OFF'
+        sa_avg_count = secondary['sa_avg_count']
+
+        mod_f_values = [
+            round(x, 3)for x in
+            np.arange(start=mod_f_min, stop=mod_f_max + 0.0002, step=mod_f_delta)
+        ]
+
+        freq_lo_values = [
+            round(x, 3) for x in
+            np.arange(start=lo_f_start, stop=lo_f_end + 0.0001, step=lo_f_step)
+        ]
+
+        gen_lo.send(f':OUTP:MOD:STAT OFF')
+
+        src.send(f'APPLY p6v,{src_u}V,{src_i_max}mA')
+        src.send('OUTPut ON')
+
+        gen_lo.send(f':DM:STAT ON')
+
+        gen_lo.send(f'SOUR:POW {lo_pow}dbm')
+
+        sa.send(':CAL:AUTO OFF')
+        sa.send(f':SENS:FREQ:SPAN {sa_span}')
+        sa.send(f'DISP:WIND:TRAC:Y:RLEV {sa_rlev}')
+        sa.send(f'DISP:WIND:TRAC:Y:PDIV {sa_scale_y}')
+        sa.send(f'AVER:COUNT {sa_avg_count}')
+        sa.send(f'AVER {sa_avg_state}')
+        sa.send(':CALC:MARK1:MODE POS')
+
+        gen_lo.send(f'OUTP:STAT ON')
+
+        result = defaultdict(dict)
+        for lo_freq in freq_lo_values:
+
+            sa_freq = lo_freq
+
+            if lo_f_is_div2:
+                lo_freq *= 2
+
+            for mod_f in mod_f_values:
+
+                if token.cancelled:
+                    gen_lo.send(f'OUTP:STAT OFF')
+
+                    time.sleep(0.5)
+
+                    src.send('OUTPut OFF')
+
+                    gen_lo.send(f':DM:IQAD OFF')
+                    gen_lo.send(f':DM:STAT OFF')
+                    gen_lo.send(f'SOUR:POW {lo_pow}dbm')
+                    gen_lo.send(f'SOUR:FREQ {lo_f_start}')
+
+                    sa.send(':CAL:AUTO ON')
+                    raise RuntimeError('measurement cancelled')
+
+                if lo_f_is_div2:
+                    sa_center_freq = sa_freq + mod_f
+                else:
+                    sa_center_freq = sa_freq - mod_f
+
+                gen_lo.send(f'SOUR:FREQ {sa_center_freq}')
+
+                if not mock_enabled:
+                    time.sleep(0.3)
+
+                sa.send(f':SENSe:FREQuency:CENTer {sa_center_freq}')
+
+                if not mock_enabled:
+                    time.sleep(0.3)
+
+                if lo_f_is_div2:
+                    f_out = sa_freq + mod_f
+                    sa_p_out = set_read_marker(f_out)
+                else:
+                    f_out = sa_freq - mod_f
+                    sa_p_out = set_read_marker(f_out)
+
+                pow_read = sa_p_out
+                loss = abs(lo_pow - pow_read)
+                if mock_enabled:
+                    loss = 10
+
+                print('loss: ', loss)
+                result[lo_freq][mod_f] = loss
+
+        gen_lo.send(f'OUTP:STAT OFF')
+
+        time.sleep(0.5)
+
+        src.send('OUTPut OFF')
+
+        gen_lo.send(f'SOUR:POW {lo_pow}dbm')
+        gen_lo.send(f'SOUR:FREQ {lo_f_start}')
+
+        sa.send(':CAL:AUTO ON')
+
+        result = {k: v for k, v in result.items()}
         pprint_to_file('cal_rf.ini', result)
 
         self._calibrated_pows_rf = result
@@ -402,7 +529,7 @@ class InstrumentController(QObject):
 
                 lo_loss = self._calibrated_pows_lo.get(lo_pow, dict()).get(lo_freq, 0) / 2
                 mod_loss = self._calibrated_pows_mod.get(mod_pow, dict()).get(mod_f, 0)
-                out_loss = 5
+                out_loss = self._calibrated_pows_rf.get(lo_freq, dict()).get(mod_f, 0) / 2
 
                 gen_mod.send(f'SOUR:POW {mod_pow + mod_loss}dbm')
                 gen_lo.send(f'SOUR:POW {lo_pow + lo_loss}dbm')
