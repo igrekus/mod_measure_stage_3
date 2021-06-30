@@ -341,7 +341,7 @@ class InstrumentController(QObject):
 
         sa_rlev = secondary['sa_rlev']
         sa_scale_y = secondary['sa_scale_y']
-        sa_span = secondary['sa_span']
+        sa_span = secondary['sa_span'] * MEGA
 
         mod_f_values = [
             round(x, 3)for x in
@@ -351,7 +351,7 @@ class InstrumentController(QObject):
         gen_mod.send(f'SOUR:POW {mod_p}dbm')
 
         sa.send(':CAL:AUTO OFF')
-        sa.send(f':SENS:FREQ:SPAN {sa_span}MHz')
+        sa.send(f':SENS:FREQ:SPAN {sa_span}')
         sa.send(f'DISP:WIND:TRAC:Y:RLEV {sa_rlev}')
         sa.send(f'DISP:WIND:TRAC:Y:PDIV {sa_scale_y}')
         sa.send(':CALC:MARK1:MODE POS')
@@ -360,12 +360,12 @@ class InstrumentController(QObject):
 
         result = defaultdict(dict)
         for mod_f in mod_f_values:
-            gen_mod.send(f'SOUR:FREQ {mod_f}MHz')
+            gen_mod.send(f'SOUR:FREQ {mod_f}')
 
             time.sleep(0.8)
 
             sa_freq = mod_f
-            sa.send(f':SENSe:FREQuency:CENTer {sa_freq}MHz')
+            sa.send(f':SENSe:FREQuency:CENTer {sa_freq}')
 
             time.sleep(0.2)
 
@@ -376,7 +376,7 @@ class InstrumentController(QObject):
             print('loss:', loss)
 
         gen_mod.send(f'OUTP:STAT OFF')
-        gen_mod.send(f'SOUR:FREQ {mod_f_min}GHz')
+        gen_mod.send(f'SOUR:FREQ {mod_f_min}')
 
         sa.send(':CAL:AUTO ON')
 
