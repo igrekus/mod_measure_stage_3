@@ -240,7 +240,7 @@ class InstrumentController(QObject):
         src.send(f'APPLY p6v,{src_u}V,{src_i_max}mA')
         src.send('OUTPut ON')
 
-        gen_lo.send(f':DM:STAT ON')
+        # gen_lo.send(f':DM:STAT ON')
 
         gen_lo.send(f'SOUR:POW {lo_pow}dbm')
 
@@ -470,14 +470,14 @@ class InstrumentController(QObject):
 
         # region main measure
         gen_lo.send(f':OUTP:MOD:STAT OFF')
-        gen_lo.send(f':RAD:ARB OFF')
-        gen_lo.send(f':DM:IQAD:EXT:COFF {mod_u_offs}')
+        # gen_lo.send(f':RAD:ARB OFF')
+        # gen_lo.send(f':DM:IQAD:EXT:COFF {mod_u_offs}')
 
         src.send(f'APPLY p6v,{src_u}V,{src_i_max}mA')
         src.send('OUTPut ON')
 
-        gen_lo.send(f':DM:IQAD ON')
-        gen_lo.send(f':DM:STAT ON')
+        # gen_lo.send(f':DM:IQAD ON')
+        # gen_lo.send(f':DM:STAT ON')
 
         sa.send(':CAL:AUTO OFF')
         sa.send(f':SENS:FREQ:SPAN {sa_span}')
@@ -504,8 +504,8 @@ class InstrumentController(QObject):
                 lo_freq *= 2
 
             gen_lo.send(f'SOUR:FREQ {lo_freq}')
-            gen_lo.send(f':DM:IQAD OFF')
-            gen_lo.send(f':DM:IQAD ON')
+            # gen_lo.send(f':DM:IQAD OFF')
+            # gen_lo.send(f':DM:IQAD ON')
 
             for mod_f in mod_f_values:
 
@@ -604,8 +604,8 @@ class InstrumentController(QObject):
                 index = 0
                 mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
 
-        gen_lo.send(f':DM:IQAD OFF')
-        gen_lo.send(f':DM:IQAD ON')
+        # gen_lo.send(f':DM:IQAD OFF')
+        # gen_lo.send(f':DM:IQAD ON')
 
         i_res = []
         for u in u_values:
