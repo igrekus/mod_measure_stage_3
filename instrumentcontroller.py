@@ -473,6 +473,7 @@ class InstrumentController(QObject):
         # gen_lo.send(f':RAD:ARB OFF')
         # gen_lo.send(f':DM:IQAD:EXT:COFF {mod_u_offs}')
 
+        src.send(f'APPLY p25v,{0.5}V,{50}mA')
         src.send(f'APPLY p6v,{src_u}V,{src_i_max}mA')
         src.send('OUTPut ON')
 
