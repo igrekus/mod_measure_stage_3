@@ -54,6 +54,7 @@ class MeasureResult:
         self._report = {
             'lo_p': lo_p,
             'lo_f': round(lo_f / GIGA, 3),
+            'mod_f': round(mod_f / MEGA, 3),
             'out_loss': out_loss,
 
             'p_out': round(sa_p_out, 2),
@@ -103,6 +104,7 @@ class MeasureResult:
         return dedent("""        Генератор:
         Pгет, дБм={lo_p}
         Fгет, ГГц={lo_f:0.2f}
+        Fмод, МГц={mod_f:0.2f}
         Pпот, дБ={out_loss:0.2f}
 
         Источник питания:
@@ -123,7 +125,8 @@ class MeasureResult:
         df = pd.DataFrame(self._processed)
 
         df.columns = [
-            'Pгет, дБм', 'Fгет, ГГц', 'Pпот, дБ',
+            'Pгет, дБм', 'Fгет, ГГц', 'Fмод. МГц',
+            'Pпот, дБ',
             'Loss rf, дБм',
             'Uпит, В', 'Iпит, мА',
         ]
