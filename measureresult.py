@@ -1,15 +1,13 @@
 import os
-import datetime
 
 from collections import defaultdict
-from subprocess import Popen
 from textwrap import dedent
 
 import pandas as pd
 
-from util.file import load_ast_if_exists, pprint_to_file, make_dirs, open_explorer_at
-from util.const import *
-from util.string import now_timestamp
+from instr.const import *
+from forgot_again.file import load_ast_if_exists, pprint_to_file, make_dirs, open_explorer_at
+from forgot_again.string import now_timestamp
 
 
 class MeasureResult:
