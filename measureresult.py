@@ -102,7 +102,7 @@ class MeasureResult:
         self._process_point(data)
 
     def save_adjustment_template(self):
-        if not self.adjustment is None:
+        if not self.adjustment:
             print('measured, saving template')
             self.adjustment = [{
                 'lo_p': p['lo_p'],
