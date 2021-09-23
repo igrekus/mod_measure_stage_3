@@ -59,8 +59,12 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
                     {'start': 0.0, 'end': 1000.0, 'step': 1, 'decimals': 1, 'value': 250.0, 'suffix': ' мВ'}
                 ],
                 'Usrc': [
-                    'Uпит.=',
+                    'Uпит.A=',
                     {'start': 4.75, 'end': 5.25, 'step': 0.25, 'value': 5.0, 'suffix': ' В'}
+                ],
+                'UsrcD': [
+                    'Uпит.D=',
+                    {'start': 3.1, 'end': 3.5, 'step': 0.1, 'value': 3.3, 'suffix': ' В'}
                 ],
                 'sa_rlev': [
                     'Ref. lev.=',

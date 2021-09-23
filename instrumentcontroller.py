@@ -61,6 +61,7 @@ class InstrumentController(QObject):
             'Fmod_delta': 10.0,   # MHz
             'Uoffs': 250,   # mV
             'Usrc': 5.0,
+            'UsrcD': 3.3,
             'sa_rlev': 10.0,
             'sa_scale_y': 10.0,
             'sa_span': 10.0,   # MHz
@@ -450,6 +451,8 @@ class InstrumentController(QObject):
 
         src_u = secondary['Usrc']
         src_i_max = 200   # mA
+        src_u_d = secondary['UsrcD']
+        src_i_d_max = 20   # mA
 
         sa_rlev = secondary['sa_rlev']
         sa_scale_y = secondary['sa_scale_y']
@@ -478,7 +481,7 @@ class InstrumentController(QObject):
         # gen_lo.send(f':RAD:ARB OFF')
         # gen_lo.send(f':DM:IQAD:EXT:COFF {mod_u_offs}')
 
-        src.send(f'APPLY p25v,{0.5}V,{50}mA')
+        src.send(f'APPLY p25v,{src_u_d}V,{src_i_d_max}mA')
         src.send(f'APPLY p6v,{src_u}V,{src_i_max}mA')
         src.send('OUTPut ON')
 
@@ -620,6 +623,7 @@ class InstrumentController(QObject):
                 raise RuntimeError('measurement cancelled')
 
             src.send(f'APPLY p6v,{u}V,{src_i_max}mA')
+            src.send(f'APPLY p25v,{3.5}V,{src_i_max}mA')
             src.send('OUTPut ON')
 
             time.sleep(0.1)
