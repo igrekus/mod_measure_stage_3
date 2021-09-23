@@ -42,6 +42,10 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
                     '1/2 Fгет.',
                     {'value': False}
                 ],
+                'D': [
+                    'D',
+                    {'value': False}
+                ],
                 'Fmod_min': [
                     'Fмод.мин=',
                     {'start': 0.0, 'end': 1000.0, 'step': 1.0, 'decimals': 3, 'value': 1.0, 'suffix': ' МГц'}

@@ -56,6 +56,7 @@ class InstrumentController(QObject):
             'Flo_max': 6.6,
             'Flo_delta': 1.0,
             'is_Flo_div2': False,
+            'D': False,
             'Fmod_min': 1.0,   # MHz
             'Fmod_max': 501.0,   # MHz
             'Fmod_delta': 10.0,   # MHz
@@ -442,6 +443,7 @@ class InstrumentController(QObject):
         lo_f_step = secondary['Flo_delta'] * GIGA
 
         lo_f_is_div2 = secondary['is_Flo_div2']
+        d = secondary['D']
 
         mod_f_min = secondary['Fmod_min'] * MEGA
         mod_f_max = secondary['Fmod_max'] * MEGA
@@ -477,6 +479,8 @@ class InstrumentController(QObject):
         u_values = [round(x, 3) for x in np.arange(start=u_start, stop=u_end + 0.002, step=u_step)]
 
         # region main measure
+        gen_f_mul = 2 if d else 1
+        gen_lo.send(f':FREQ:MULT {gen_f_mul}')
         gen_lo.send(f':OUTP:MOD:STAT OFF')
         # gen_lo.send(f':RAD:ARB OFF')
         # gen_lo.send(f':DM:IQAD:EXT:COFF {mod_u_offs}')
@@ -553,7 +557,11 @@ class InstrumentController(QObject):
                 else:
                     sa_center_freq = sa_freq - mod_f
 
-                sa.send(f':SENSe:FREQuency:CENTer {sa_center_freq}')
+                sa.send(f'DISP:WIND:TRAC:X:OFFS {0}Hz')
+                center_f = sa_center_freq / 2 if d else sa_center_freq
+                sa.send(f':SENSe:FREQuency:CENTer {center_f}Hz')
+                offset = sa_center_freq / 2if d else 0
+                sa.send(f'DISP:WIND:TRAC:X:OFFS {offset}Hz')
 
                 if not mock_enabled:
                     time.sleep(0.3)
