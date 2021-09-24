@@ -482,7 +482,7 @@ class InstrumentController(QObject):
         gen_f_mul = 2 if d else 1
         gen_lo.send(f':FREQ:MULT {gen_f_mul}')
         gen_lo.send(f':OUTP:MOD:STAT OFF')
-        # gen_lo.send(f':RAD:ARB OFF')
+        gen_lo.send(f':RAD:ARB OFF')
         # gen_lo.send(f':DM:IQAD:EXT:COFF {mod_u_offs}')
 
         src.send(f'APPLY p25v,{src_u_d}V,{src_i_d_max}mA')
@@ -558,9 +558,9 @@ class InstrumentController(QObject):
                     sa_center_freq = sa_freq - mod_f
 
                 sa.send(f'DISP:WIND:TRAC:X:OFFS {0}Hz')
-                center_f = sa_center_freq / 2 if d else sa_center_freq
+                center_f = (lo_freq / 2 - mod_f) if d else sa_center_freq
                 sa.send(f':SENSe:FREQuency:CENTer {center_f}Hz')
-                offset = sa_center_freq / 2if d else 0
+                offset = (lo_freq / 2) if d else 0
                 sa.send(f'DISP:WIND:TRAC:X:OFFS {offset}Hz')
 
                 if not mock_enabled:
@@ -570,7 +570,7 @@ class InstrumentController(QObject):
                     f_out = sa_freq + mod_f
                     sa_p_out = set_read_marker(f_out)
                 else:
-                    f_out = sa_freq - mod_f
+                    f_out = (center_f + offset) if d else (sa_freq - mod_f)
                     sa_p_out = set_read_marker(f_out)
 
                 src_u_read = src_u
