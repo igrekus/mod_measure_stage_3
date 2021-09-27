@@ -48,15 +48,15 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
                 ],
                 'Fmod_min': [
                     'Fмод.мин=',
-                    {'start': 0.0, 'end': 1000.0, 'step': 1.0, 'decimals': 3, 'value': 1.0, 'suffix': ' МГц'}
+                    {'start': 0.0, 'end': 2000.0, 'step': 1.0, 'decimals': 3, 'value': 1.0, 'suffix': ' МГц'}
                 ],
                 'Fmod_max': [
                     'Fмод.макс=',
-                    {'start': 0.0, 'end': 1000.0, 'step': 1.0, 'decimals': 3, 'value': 501.0, 'suffix': ' МГц'}
+                    {'start': 0.0, 'end': 2000.0, 'step': 1.0, 'decimals': 3, 'value': 501.0, 'suffix': ' МГц'}
                 ],
                 'Fmod_delta': [
                     'ΔFмод=',
-                    {'start': 0.0, 'end': 1000.0, 'step': 1.0, 'decimals': 3, 'value': 10.0, 'suffix': ' МГц'}
+                    {'start': 0.0, 'end': 2000.0, 'step': 1.0, 'decimals': 3, 'value': 10.0, 'suffix': ' МГц'}
                 ],
                 'Uoffs': [
                     'Uсм=',
