@@ -17,10 +17,8 @@ class MeasureResult:
         self._primary_params = None
         self._secondaryParams = None
         self._raw = list()
-        self._raw_current = list()
         self._report = dict()
         self._processed = list()
-        self._processed_currents = list()
         self.ready = False
 
         self.data1 = defaultdict(list)
@@ -34,10 +32,6 @@ class MeasureResult:
         return self.ready
 
     def process(self):
-        currents = [list(d.values()) for d in self._raw_current]
-        self.data2[1] = currents
-        self._processed_currents = currents
-
         self.ready = True
         self._prepare_table_data()
 
@@ -45,9 +39,6 @@ class MeasureResult:
         lo_p = data['lo_p']
         lo_f = data['lo_f']
         mod_f = data['mod_f']
-
-        src_u = data['src_u']
-        src_i = data['src_i'] / MILLI
 
         out_loss = data['out_loss']
         sa_p_out = data['sa_p_out'] + out_loss
@@ -66,9 +57,6 @@ class MeasureResult:
             'out_loss': out_loss,
 
             'p_out': round(sa_p_out, 2),
-
-            'src_u': src_u,
-            'src_i': round(src_i, 2),
         }
 
         lo_f_label = lo_f / GIGA
@@ -79,10 +67,8 @@ class MeasureResult:
     def clear(self):
         self._secondaryParams.clear()
         self._raw.clear()
-        self._raw_current.clear()
         self._report.clear()
         self._processed.clear()
-        self._processed_currents.clear()
 
         self.data1.clear()
         self.data2.clear()
@@ -119,10 +105,6 @@ class MeasureResult:
         Fмод, МГц={mod_f:0.2f}
         Pпот, дБ={out_loss:0.2f}
 
-        Источник питания:
-        U, В={src_u}
-        I, мА={src_i}
-
         Анализатор:
         Pвых, дБм={p_out:0.3f}
         """.format(**self._report))
@@ -140,22 +122,10 @@ class MeasureResult:
             'Pгет, дБм', 'Fгет, ГГц', 'Fмод. МГц',
             'Pпот, дБ',
             'Loss rf, дБм',
-            'Uпит, В', 'Iпит, мА',
         ]
         df.to_excel(file_name, engine='openpyxl', index=False)
 
-        self._export_current()
-
         open_explorer_at(os.path.abspath(file_name))
-
-    def _export_current(self):
-        device = 'mod'
-        path = 'xlsx'
-
-        file_name = f'./{path}/{device}-curr-{now_timestamp()}.xlsx'
-        df = pd.DataFrame(self._processed_currents, columns=['Uпит, В', 'Iпот, мА'])
-
-        df.to_excel(file_name, engine='openpyxl', index=False)
 
     def _prepare_table_data(self):
         table_file = self._primary_params.get('result', '')

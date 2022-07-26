@@ -20,23 +20,23 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
             params={
                 'Plo': [
                     'Pгет=',
-                    {'start': -30.0, 'end': 30.0, 'step': 1.0, 'value': -5.0, 'suffix': ' дБм'}
+                    {'start': -100.0, 'end': 100.0, 'step': 1.0, 'value': -5.0, 'suffix': ' дБм'}
                 ],
                 'Pmod': [
                     'Pмод=',
-                    {'start': -30.0, 'end': 30.0, 'step': 1.0, 'value': -5.0, 'suffix': ' дБм'}
+                    {'start': -100.0, 'end': 100.0, 'step': 1.0, 'value': -5.0, 'suffix': ' дБм'}
                 ],
                 'Flo_min': [
                     'Fгет.мин=',
-                    {'start': 0.0, 'end': 40.0, 'step': 1.0, 'decimals': 3, 'value': 0.6, 'suffix': ' ГГц'}
+                    {'start': 0.0, 'end': 100.0, 'step': 1.0, 'decimals': 3, 'value': 0.6, 'suffix': ' ГГц'}
                 ],
                 'Flo_max': [
                     'Fгет.макс=',
-                    {'start': 0.0, 'end': 40.0, 'step': 1.0, 'decimals': 3, 'value': 6.6, 'suffix': ' ГГц'}
+                    {'start': 0.0, 'end': 100.0, 'step': 1.0, 'decimals': 3, 'value': 6.6, 'suffix': ' ГГц'}
                 ],
                 'Flo_delta': [
                     'ΔFгет=',
-                    {'start': 0.0, 'end': 40.0, 'step': 0.1, 'decimals': 3, 'value': 1.0, 'suffix': ' ГГц'}
+                    {'start': 0.0, 'end': 100.0, 'step': 0.1, 'decimals': 3, 'value': 1.0, 'suffix': ' ГГц'}
                 ],
                 'is_Flo_div2': [
                     '1/2 Fгет.',
@@ -48,27 +48,19 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
                 ],
                 'Fmod_min': [
                     'Fмод.мин=',
-                    {'start': 0.0, 'end': 2000.0, 'step': 1.0, 'decimals': 3, 'value': 1.0, 'suffix': ' МГц'}
+                    {'start': 0.0, 'end': 20000.0, 'step': 1.0, 'decimals': 3, 'value': 1.0, 'suffix': ' МГц'}
                 ],
                 'Fmod_max': [
                     'Fмод.макс=',
-                    {'start': 0.0, 'end': 2000.0, 'step': 1.0, 'decimals': 3, 'value': 501.0, 'suffix': ' МГц'}
+                    {'start': 0.0, 'end': 20000.0, 'step': 1.0, 'decimals': 3, 'value': 501.0, 'suffix': ' МГц'}
                 ],
                 'Fmod_delta': [
                     'ΔFмод=',
-                    {'start': 0.0, 'end': 2000.0, 'step': 1.0, 'decimals': 3, 'value': 10.0, 'suffix': ' МГц'}
+                    {'start': 0.0, 'end': 20000.0, 'step': 1.0, 'decimals': 3, 'value': 10.0, 'suffix': ' МГц'}
                 ],
                 'Uoffs': [
                     'Uсм=',
                     {'start': 0.0, 'end': 1000.0, 'step': 1, 'decimals': 1, 'value': 250.0, 'suffix': ' мВ'}
-                ],
-                'Usrc': [
-                    'Uпит.A=',
-                    {'start': 4.75, 'end': 5.25, 'step': 0.25, 'value': 5.0, 'suffix': ' В'}
-                ],
-                'UsrcD': [
-                    'Uпит.D=',
-                    {'start': 3.1, 'end': 3.5, 'step': 0.1, 'value': 3.3, 'suffix': ' В'}
                 ],
                 'sa_rlev': [
                     'Ref. lev.=',
@@ -89,19 +81,6 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
                 'sa_avg_count': [
                     'Avg.count=',
                     {'start': 0.0, 'end': 1000.0, 'step': 1.0, 'value': 16.0, 'suffix': ''}
-                ],
-                'sep_1': ['', {'value': None}],
-                'u_min': [
-                    'Uмин.=',
-                    {'start': 0.0, 'end': 30.0, 'step': 0.05, 'value': 4.75, 'suffix': ' В'}
-                ],
-                'u_max': [
-                    'Uмакс.=',
-                    {'start': 0.0, 'end': 30.0, 'step': 0.05, 'value': 5.25, 'suffix': ' В'}
-                ],
-                'u_delta': [
-                    'ΔU=',
-                    {'start': 0.0, 'end': 30.0, 'step': 0.05, 'value': 0.05, 'suffix': ' В'}
                 ],
             }
             , parent=self)
