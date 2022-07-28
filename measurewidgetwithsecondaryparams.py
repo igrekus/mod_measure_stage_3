@@ -28,15 +28,15 @@ class MeasureWidgetWithSecondaryParameters(MeasureWidget):
                 ],
                 'Flo_min': [
                     'Fгет.мин=',
-                    {'start': 0.0, 'end': 100.0, 'step': 1.0, 'decimals': 3, 'value': 0.6, 'suffix': ' ГГц'}
+                    {'start': 0.0, 'end': 100.0, 'step': 1.0, 'decimals': 4, 'value': 0.6, 'suffix': ' ГГц'}
                 ],
                 'Flo_max': [
                     'Fгет.макс=',
-                    {'start': 0.0, 'end': 100.0, 'step': 1.0, 'decimals': 3, 'value': 6.6, 'suffix': ' ГГц'}
+                    {'start': 0.0, 'end': 100.0, 'step': 1.0, 'decimals': 4, 'value': 6.6, 'suffix': ' ГГц'}
                 ],
                 'Flo_delta': [
                     'ΔFгет=',
-                    {'start': 0.0, 'end': 100.0, 'step': 0.1, 'decimals': 3, 'value': 1.0, 'suffix': ' ГГц'}
+                    {'start': 0.0, 'end': 100.0, 'step': 0.1, 'decimals': 4, 'value': 1.0, 'suffix': ' ГГц'}
                 ],
                 'is_Flo_div2': [
                     '1/2 Fгет.',
